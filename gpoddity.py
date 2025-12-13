@@ -106,7 +106,7 @@ def main(
         logger.error(f"[!] When running in smb-mode 'forwarded', the 'attacker-ip' and 'forwarded-ip' arguments should be provided.")
         return
 
-    if gpo_type != GPOTypes.computer and smb_mode != SMBModes.embedded:
+    if gpo_type != GPOTypes.computer and smb_mode == SMBModes.embedded:
         confirmation = typer.prompt("[!] You are trying to target a User Group Policy Object while running the embedded SMB server. This will probably not work. Are you sure you want to continue? [yes/no] ")
         if confirmation != 'yes':
             return
