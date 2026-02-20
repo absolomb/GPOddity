@@ -13,7 +13,7 @@ from conf import OUTPUT_DIR
 
 
 class ScheduledTask:
-    def __init__(self, gpo_type="computer", name="", mod_date="", description="", powershell=False, command="", old_value=""):
+    def __init__(self, gpo_type="computer", name="", mod_date="", description="", powershell=False, command="", old_value="",  computername=""):
         self._type = gpo_type
 
         if name:
@@ -51,11 +51,15 @@ class ScheduledTask:
 
         self._task_str_begin = f"""<?xml version="1.0" encoding="utf-8"?><ScheduledTasks clsid="{{CC63F200-7309-4ba0-B154-A71CD118DBCC}}">"""
         if self._type == "computer":
-            self._task_str = f"""<ImmediateTaskV2 clsid="{{9756B581-76EC-4169-9AFC-0CA8D43ADB5F}}" name="{self._name}" image="0" changed="{self._mod_date}" uid="{{{self._guid}}}" userContext="0" removePolicy="0"><Properties action="C" name="{self._name}" runAs="NT AUTHORITY\\System" logonType="S4U"><Task version="1.3"><RegistrationInfo><Author>{self._author}</Author><Description>{self._description}</Description></RegistrationInfo><Principals><Principal id="Author"><UserId>NT AUTHORITY\\System</UserId><RunLevel>HighestAvailable</RunLevel><LogonType>S4U</LogonType></Principal></Principals><Settings><IdleSettings><Duration>PT10M</Duration><WaitTimeout>PT1H</WaitTimeout><StopOnIdleEnd>true</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>true</StopIfGoingOnBatteries><AllowHardTerminate>false</AllowHardTerminate><StartWhenAvailable>true</StartWhenAvailable><AllowStartOnDemand>false</AllowStartOnDemand><Enabled>true</Enabled><Hidden>true</Hidden><ExecutionTimeLimit>PT0S</ExecutionTimeLimit><Priority>7</Priority><DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter><RestartOnFailure><Interval>PT15M</Interval><Count>3</Count></RestartOnFailure></Settings><Actions Context="Author"><Exec><Command>{self._shell}</Command><Arguments>{self._command}</Arguments></Exec></Actions><Triggers><TimeTrigger><StartBoundary>%LocalTimeXmlEx%</StartBoundary><EndBoundary>%LocalTimeXmlEx%</EndBoundary><Enabled>true</Enabled></TimeTrigger></Triggers></Task></Properties></ImmediateTaskV2>"""
+            self._task_str = f"""<ImmediateTaskV2 clsid="{{9756B581-76EC-4169-9AFC-0CA8D43ADB5F}}" name="{self._name}" image="0" changed="{self._mod_date}" uid="{{{self._guid}}}" userContext="0" removePolicy="0"><Properties action="C" name="{self._name}" runAs="NT AUTHORITY\\System" logonType="S4U"><Task version="1.3"><RegistrationInfo><Author>{self._author}</Author><Description>{self._description}</Description></RegistrationInfo><Principals><Principal id="Author"><UserId>NT AUTHORITY\\System</UserId><RunLevel>HighestAvailable</RunLevel><LogonType>S4U</LogonType></Principal></Principals><Settings><IdleSettings><Duration>PT10M</Duration><WaitTimeout>PT1H</WaitTimeout><StopOnIdleEnd>true</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>true</StopIfGoingOnBatteries><AllowHardTerminate>false</AllowHardTerminate><StartWhenAvailable>true</StartWhenAvailable><AllowStartOnDemand>false</AllowStartOnDemand><Enabled>true</Enabled><Hidden>true</Hidden><ExecutionTimeLimit>PT0S</ExecutionTimeLimit><Priority>7</Priority><DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter><RestartOnFailure><Interval>PT15M</Interval><Count>3</Count></RestartOnFailure></Settings><Actions Context="Author"><Exec><Command>{self._shell}</Command><Arguments>{self._command}</Arguments></Exec></Actions><Triggers><TimeTrigger><StartBoundary>%LocalTimeXmlEx%</StartBoundary><EndBoundary>%LocalTimeXmlEx%</EndBoundary><Enabled>true</Enabled></TimeTrigger></Triggers></Task></Properties>"""
         else:
-            self._task_str = f"""<ImmediateTaskV2 clsid="{{9756B581-76EC-4169-9AFC-0CA8D43ADB5F}}" name="{self._name}" image="0" changed="{self._mod_date}" uid="{{{self._guid}}}"><Properties action="C" name="{self._name}" runAs="%LogonDomain%\%LogonUser%" logonType="InteractiveToken"><Task version="1.3"><RegistrationInfo><Author>{self._author}</Author><Description>{self._description}</Description></RegistrationInfo><Principals><Principal id="Author"><UserId>%LogonDomain%\%LogonUser%</UserId><LogonType>InteractiveToken</LogonType><RunLevel>HighestAvailable</RunLevel></Principal></Principals><Settings><IdleSettings><Duration>PT10M</Duration><WaitTimeout>PT1H</WaitTimeout><StopOnIdleEnd>true</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>true</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>true</StopIfGoingOnBatteries><AllowHardTerminate>true</AllowHardTerminate><StartWhenAvailable>true</StartWhenAvailable><RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable><AllowStartOnDemand>true</AllowStartOnDemand><Enabled>true</Enabled><Hidden>false</Hidden><RunOnlyIfIdle>false</RunOnlyIfIdle><WakeToRun>false</WakeToRun><ExecutionTimeLimit>P3D</ExecutionTimeLimit><Priority>7</Priority><DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter></Settings><Triggers><TimeTrigger><StartBoundary>%LocalTimeXmlEx%</StartBoundary><EndBoundary>%LocalTimeXmlEx%</EndBoundary><Enabled>true</Enabled></TimeTrigger></Triggers><Actions Context="Author"><Exec><Command>{self._shell}</Command><Arguments>{self._command}</Arguments></Exec></Actions></Task></Properties></ImmediateTaskV2>"""
+            self._task_str = f"""<ImmediateTaskV2 clsid="{{9756B581-76EC-4169-9AFC-0CA8D43ADB5F}}" name="{self._name}" image="0" changed="{self._mod_date}" uid="{{{self._guid}}}"><Properties action="C" name="{self._name}" runAs="%LogonDomain%\%LogonUser%" logonType="InteractiveToken"><Task version="1.3"><RegistrationInfo><Author>{self._author}</Author><Description>{self._description}</Description></RegistrationInfo><Principals><Principal id="Author"><UserId>%LogonDomain%\%LogonUser%</UserId><LogonType>InteractiveToken</LogonType><RunLevel>HighestAvailable</RunLevel></Principal></Principals><Settings><IdleSettings><Duration>PT10M</Duration><WaitTimeout>PT1H</WaitTimeout><StopOnIdleEnd>true</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>true</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>true</StopIfGoingOnBatteries><AllowHardTerminate>true</AllowHardTerminate><StartWhenAvailable>true</StartWhenAvailable><RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable><AllowStartOnDemand>true</AllowStartOnDemand><Enabled>true</Enabled><Hidden>false</Hidden><RunOnlyIfIdle>false</RunOnlyIfIdle><WakeToRun>false</WakeToRun><ExecutionTimeLimit>P3D</ExecutionTimeLimit><Priority>7</Priority><DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter></Settings><Triggers><TimeTrigger><StartBoundary>%LocalTimeXmlEx%</StartBoundary><EndBoundary>%LocalTimeXmlEx%</EndBoundary><Enabled>true</Enabled></TimeTrigger></Triggers><Actions Context="Author"><Exec><Command>{self._shell}</Command><Arguments>{self._command}</Arguments></Exec></Actions></Task></Properties>"""
 
-        self._task_str_end = f"""</ScheduledTasks>"""
+        if computername:
+            self._computername = computername
+            self._task_str += f"""<Filters><FilterComputer bool="AND" not="0" type="NETBIOS" name="{self._computername}"/></Filters>"""
+
+        self._task_str_end = f"""</ImmediateTaskV2></ScheduledTasks>"""
 
     def generate_scheduled_task_xml(self):
         if self._old_value == "":
@@ -81,20 +85,20 @@ class ScheduledTask:
             ])
         return tasks
 
-def write_scheduled_task(gpo_type, command, powershell):
+def write_scheduled_task(gpo_type, command, powershell, computername):
     root_path = "Machine" if gpo_type == "computer" else "User"
     scheduled_tasks_path = os.path.join(OUTPUT_DIR, root_path, "Preferences", "ScheduledTasks", "ScheduledTasks.xml")
 
     if os.path.exists(scheduled_tasks_path):
         with open(scheduled_tasks_path, "r") as f:
             st_content = f.read()
-        st = ScheduledTask(gpo_type=gpo_type, powershell=powershell, command=command, old_value=st_content)
+        st = ScheduledTask(gpo_type=gpo_type, powershell=powershell, command=command, old_value=st_content, computername=computername)
         tasks = st.parse_tasks(st_content)
         new_content = st.generate_scheduled_task_xml()
     else:
         st_content = ""
         os.makedirs(os.path.join(OUTPUT_DIR, root_path, "Preferences", "ScheduledTasks"), exist_ok=True)
-        st = ScheduledTask(gpo_type=gpo_type, powershell=powershell, command=command)
+        st = ScheduledTask(gpo_type=gpo_type, powershell=powershell, command=command, computername=computername)
         new_content = st.generate_scheduled_task_xml()
     
     with open(scheduled_tasks_path, "w") as f:
