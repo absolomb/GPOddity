@@ -85,11 +85,11 @@ class ScheduledTask:
             ])
         return tasks
 
-def write_scheduled_task(gpo_type, command, powershell, computername, force):
+def write_scheduled_task(gpo_type, command, powershell, computername):
     root_path = "Machine" if gpo_type == "computer" else "User"
     scheduled_tasks_path = os.path.join(OUTPUT_DIR, root_path, "Preferences", "ScheduledTasks", "ScheduledTasks.xml")
 
-    if not force and os.path.exists(scheduled_tasks_path):
+    if os.path.exists(scheduled_tasks_path):
         with open(scheduled_tasks_path, "r") as f:
             st_content = f.read()
         st = ScheduledTask(gpo_type=gpo_type, powershell=powershell, command=command, old_value=st_content, computername=computername)
